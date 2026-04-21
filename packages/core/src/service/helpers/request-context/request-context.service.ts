@@ -72,7 +72,7 @@ export class RequestContextService {
      *
      * @since 3.6.3
      */
-    async createDefaultContext(config: CreateDefaultRequestContextConfig): Promise<RequestContext> {
+    async createDefaultContext(config?: CreateDefaultRequestContextConfig): Promise<RequestContext> {
         const channel = await this.channelService.getDefaultChannel();
         return new RequestContext({
             apiType: 'admin',

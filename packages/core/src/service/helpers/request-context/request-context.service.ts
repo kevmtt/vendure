@@ -35,10 +35,13 @@ export class RequestContextService {
      * Creates a RequestContext based on the default Channel. This is useful when a service method
      * must be called outside the normal request-response cycle and needs a context that has a valid
      * `languageCode` derived from the default Channel's configuration.
+     * @param config optional manual configuration overwriting the default values
      *
      * @since 3.6.3
      */
-    async createDefaultContext(): Promise<RequestContext> {
+    async createDefaultContext(
+        config: Partial<ConstructorParameters<typeof RequestContext>[0]>,
+    ): Promise<RequestContext> {
         const channel = await this.channelService.getDefaultChannel();
         return new RequestContext({
             apiType: 'admin',
@@ -47,6 +50,7 @@ export class RequestContextService {
             authorizedAsOwnerOnly: false,
             languageCode: channel.defaultLanguageCode ?? this.configService.defaultLanguageCode,
             currencyCode: channel.defaultCurrencyCode,
+            ...config,
         });
     }
 

@@ -8,7 +8,7 @@ Creates new [RequestContext](/reference/typescript-api/request/request-context#r
 
 ```ts title="Signature"
 class RequestContextService {
-    createDefaultContext() => Promise<RequestContext>;
+    createDefaultContext(config: Partial<ConstructorParameters<typeof RequestContext>[0]>) => Promise<RequestContext>;
     create(config: {
         req?: Request;
         apiType: ApiType;
@@ -26,11 +26,11 @@ class RequestContextService {
 
 ### createDefaultContext
 
-<MemberInfo kind="method" type={`() => Promise<<a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>>`}  since="3.6.3"  />
+<MemberInfo kind="method" type={`(config: Partial<ConstructorParameters<typeof <a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>>[0]>) => Promise<<a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>>`}  since="3.6.3"  />
 
 Creates a RequestContext based on the default Channel. This is useful when a service method
 must be called outside the normal request-response cycle and needs a context that has a valid
-`languageCode` & `currencyCode` derived from the default Channel's configuration.
+`languageCode` derived from the default Channel's configuration.
 ### create
 
 <MemberInfo kind="method" type={`(config: {         req?: Request;         apiType: <a href='/reference/typescript-api/request/api-type#apitype'>ApiType</a>;         channelOrToken?: <a href='/reference/typescript-api/entities/channel#channel'>Channel</a> | string;         languageCode?: <a href='/reference/typescript-api/common/language-code#languagecode'>LanguageCode</a>;         currencyCode?: <a href='/reference/typescript-api/common/currency-code#currencycode'>CurrencyCode</a>;         user?: <a href='/reference/typescript-api/entities/user#user'>User</a>;         activeOrderId?: <a href='/reference/typescript-api/common/id#id'>ID</a>;     }) => Promise<<a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>>`}  since="1.5.0"  />

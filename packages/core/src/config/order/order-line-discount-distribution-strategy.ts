@@ -9,8 +9,8 @@ import { Order } from '../../entity/order/order.entity';
  * {@link OrderLine}s of an {@link Order}. The weights returned for all lines are fed into the
  * `prorate()` helper, which splits the total order-level discount amount proportionally.
  *
- * This makes it possible to control what happens to the distribution when a line is cancelled or
- * refunded. The default strategy gives a fully-cancelled line (quantity 0) a weight of 0, so its
+ * This makes it possible to control what happens to the distribution when a line is canceled or
+ * refunded. The default strategy gives a fully-canceled line (quantity 0) a weight of 0, so its
  * share of the discount is redistributed across the remaining lines. A custom strategy can instead
  * weight lines by their originally-placed quantity, keeping each surviving line's share stable when
  * another line is refunded.

@@ -6,6 +6,7 @@ import { MockClass } from '../testing/testing-types';
 import { ConfigService } from './config.service';
 import { EntityIdStrategy } from './entity/entity-id-strategy';
 import { DefaultOrderLineDiscountDistributionStrategy } from './order/default-order-line-discount-distribution-strategy';
+import { OrderOptions } from './vendure-config';
 
 export class MockConfigService implements MockClass<ConfigService> {
     apiOptions = {
@@ -44,7 +45,7 @@ export class MockConfigService implements MockClass<ConfigService> {
     taxOptions: {};
     emailOptions: {};
     importExportOptions: {};
-    orderOptions = {
+    orderOptions: Partial<OrderOptions> = {
         orderLineDiscountDistributionStrategy: new DefaultOrderLineDiscountDistributionStrategy(),
     };
     customFields = {};

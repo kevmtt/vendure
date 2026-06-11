@@ -758,7 +758,7 @@ describe('OrderCalculator', () => {
             // cancelled/refunded line keeps a non-zero weight and the surviving lines' shares stay
             // stable. See issue #4811 / the §6 recipe.
             class TestPlacedQuantityDistributionStrategy implements OrderLineDiscountDistributionStrategy {
-                getWeight(ctx: RequestContext, line: OrderLine): number {
+                getWeight(ctx: RequestContext, line: OrderLine, order: Order): number {
                     const qty = line.orderPlacedQuantity > 0 ? line.orderPlacedQuantity : line.quantity;
                     return line.unitPriceWithTax * qty;
                 }

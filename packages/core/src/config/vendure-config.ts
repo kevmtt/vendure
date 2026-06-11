@@ -663,7 +663,7 @@ export interface OrderOptions {
     /**
      * @description
      * Defines how an order-level promotion discount is distributed (prorated) across the OrderLines
-     * of an Order. The default redistributes a cancelled line's share onto the remaining lines; a
+     * of an Order. The default redistributes a canceled line's share onto the remaining lines; a
      * custom strategy can keep each line's share stable across refunds.
      *
      * @since 3.7.0

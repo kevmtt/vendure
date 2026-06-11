@@ -15,6 +15,21 @@ import { Order } from '../../entity/order/order.entity';
  * weight lines by their originally-placed quantity, keeping each surviving line's share stable when
  * another line is refunded.
  *
+ * @example
+ * ```ts
+ * // Keeps each surviving line's discount share stable when another line is
+ * // refunded, rather than redistributing the canceled line's share onto the
+ * // remaining lines. Suitable for unconditional order-level promotions where
+ * // the refunded amount must reconcile with the order total.
+ * export class PlacementStableDistributionStrategy
+ *     implements OrderLineDiscountDistributionStrategy {
+ *     getWeight(ctx: RequestContext, line: OrderLine, order: Order): number {
+ *         const placedQuantity = line.orderPlacedQuantity || line.quantity;
+ *         return line.unitPriceWithTax * placedQuantity;
+ *     }
+ * }
+ * ```
+ *
  * :::info
  *
  * This is configured via the `orderOptions.orderLineDiscountDistributionStrategy` property of
@@ -32,6 +47,10 @@ export interface OrderLineDiscountDistributionStrategy extends InjectableStrateg
      * @description
      * Returns the (non-negative) weight for the given OrderLine. Returning 0 excludes the line from
      * receiving any share of the order-level discount.
+     *
+     * The `order` argument provides the full Order context (e.g. the other lines, the
+     * originally-placed quantities, the order state), allowing a custom strategy to weight a line
+     * relative to the rest of the order rather than in isolation.
      */
-    getWeight(ctx: RequestContext, line: OrderLine, order: Order): number;
+    getWeight(ctx: RequestContext, line: OrderLine, order: Order): number | Promise<number>;
 }

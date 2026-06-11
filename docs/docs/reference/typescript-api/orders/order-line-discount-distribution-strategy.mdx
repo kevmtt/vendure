@@ -2,7 +2,9 @@
 title: "OrderLineDiscountDistributionStrategy"
 generated: true
 ---
-<GenerationInfo sourceFile="packages/core/src/config/order/order-line-discount-distribution-strategy.ts" sourceLine="30" packageName="@vendure/core" since="3.7.0" />
+## OrderLineDiscountDistributionStrategy
+
+<GenerationInfo sourceFile="packages/core/src/config/order/order-line-discount-distribution-strategy.ts" sourceLine="45" packageName="@vendure/core" since="3.7.0" />
 
 Determines the weight used to distribute (prorate) an order-level promotion discount across the
 [OrderLine](/reference/typescript-api/entities/order-line#orderline)s of an [Order](/reference/typescript-api/entities/order#order). The weights returned for all lines are fed into the
@@ -14,6 +16,22 @@ share of the discount is redistributed across the remaining lines. A custom stra
 weight lines by their originally-placed quantity, keeping each surviving line's share stable when
 another line is refunded.
 
+*Example*
+
+```ts
+// Keeps each surviving line's discount share stable when another line is
+// refunded, rather than redistributing the canceled line's share onto the
+// remaining lines. Suitable for unconditional order-level promotions where
+// the refunded amount must reconcile with the order total.
+export class PlacementStableDistributionStrategy
+    implements OrderLineDiscountDistributionStrategy {
+    getWeight(ctx: RequestContext, line: OrderLine, order: Order): number {
+        const placedQuantity = line.orderPlacedQuantity || line.quantity;
+        return line.unitPriceWithTax * placedQuantity;
+    }
+}
+```
+
 :::info
 
 This is configured via the `orderOptions.orderLineDiscountDistributionStrategy` property of
@@ -23,7 +41,7 @@ your VendureConfig.
 
 ```ts title="Signature"
 interface OrderLineDiscountDistributionStrategy extends InjectableStrategy {
-    getWeight(ctx: RequestContext, line: OrderLine, order: Order): number;
+    getWeight(ctx: RequestContext, line: OrderLine, order: Order): number | Promise<number>;
 }
 ```
 * Extends: [`InjectableStrategy`](/reference/typescript-api/common/injectable-strategy#injectablestrategy)
@@ -34,22 +52,39 @@ interface OrderLineDiscountDistributionStrategy extends InjectableStrategy {
 
 ### getWeight
 
-<MemberInfo kind="method" type={`(ctx: <a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>, line: <a href='/reference/typescript-api/entities/order-line#orderline'>OrderLine</a>, order: <a href='/reference/typescript-api/entities/order#order'>Order</a>) => number`}   />
+<MemberInfo kind="method" type={`(ctx: <a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>, line: <a href='/reference/typescript-api/entities/order-line#orderline'>OrderLine</a>, order: <a href='/reference/typescript-api/entities/order#order'>Order</a>) => number | Promise<number>`}   />
 
 Returns the (non-negative) weight for the given OrderLine. Returning 0 excludes the line from
 receiving any share of the order-level discount.
 
+The `order` argument provides the full Order context (e.g. the other lines, the
+originally-placed quantities, the order state), allowing a custom strategy to weight a line
+relative to the rest of the order rather than in isolation.
+
 
 </div>
-<GenerationInfo sourceFile="packages/core/src/config/order/default-order-line-discount-distribution-strategy.ts" sourceLine="16" packageName="@vendure/core" since="3.7.0" />
+## DefaultOrderLineDiscountDistributionStrategy
+
+<GenerationInfo sourceFile="packages/core/src/config/order/default-order-line-discount-distribution-strategy.ts" sourceLine="28" packageName="@vendure/core" since="3.7.0" />
 
 The default [OrderLineDiscountDistributionStrategy](/reference/typescript-api/orders/order-line-discount-distribution-strategy#orderlinediscountdistributionstrategy). Weights each line by its current
-prorated line price (incl. tax) and assigns zero weight to fully-cancelled lines (quantity 0).
-This reproduces Vendure's historical distribution behaviour exactly.
+prorated line price (incl. tax) and assigns zero weight to fully-canceled lines (quantity 0).
+This reproduces Vendure's historical distribution behavior exactly.
+
+This default is consistent with Vendure's promotion model, in which order-level promotions are
+re-evaluated on every order modification. When an order line is canceled, its share of an
+order-level discount is redistributed across the surviving lines.
+
+Note that for **unconditional** order-level promotions (e.g. a flat "$50 off" with no minimum),
+this redistribution means a partial refund reduces the order total by more than the amount
+refunded, since the canceled line's discount share moves onto the retained lines. Stores that
+require the discount distributions to be immutable by refunds should provide a custom strategy
+that weights lines by their originally-placed quantity (see the example on
+[OrderLineDiscountDistributionStrategy](/reference/typescript-api/orders/order-line-discount-distribution-strategy#orderlinediscountdistributionstrategy)).
 
 ```ts title="Signature"
 class DefaultOrderLineDiscountDistributionStrategy implements OrderLineDiscountDistributionStrategy {
-    getWeight(ctx: RequestContext, line: OrderLine) => number;
+    getWeight(ctx: RequestContext, line: OrderLine, order: Order) => number;
 }
 ```
 * Implements: [`OrderLineDiscountDistributionStrategy`](/reference/typescript-api/orders/order-line-discount-distribution-strategy#orderlinediscountdistributionstrategy)
@@ -60,7 +95,7 @@ class DefaultOrderLineDiscountDistributionStrategy implements OrderLineDiscountD
 
 ### getWeight
 
-<MemberInfo kind="method" type={`(ctx: <a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>, line: <a href='/reference/typescript-api/entities/order-line#orderline'>OrderLine</a>) => number`}   />
+<MemberInfo kind="method" type={`(ctx: <a href='/reference/typescript-api/request/request-context#requestcontext'>RequestContext</a>, line: <a href='/reference/typescript-api/entities/order-line#orderline'>OrderLine</a>, order: <a href='/reference/typescript-api/entities/order#order'>Order</a>) => number`}   />
 
 
 

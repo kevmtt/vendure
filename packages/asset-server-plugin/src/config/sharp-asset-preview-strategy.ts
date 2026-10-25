@@ -78,7 +78,8 @@ interface SharpAssetPreviewConfig {
  *
  * The XMP packet of the source image is copied to the preview unchanged, so provenance markings such as the
  * IPTC `DigitalSourceType` of AI-generated images are kept, along with anything else stored in XMP.
- * EXIF, ICC and IPTC-IIM metadata are not copied.
+ * This applies to formats in which Sharp can read and write XMP, such as JPEG, PNG and WebP. Previews of GIF
+ * and SVG sources do not contain the source XMP. EXIF, ICC and IPTC-IIM metadata are not copied.
  *
  * The settings for the outputs will default to Sharp's defaults (https://sharp.pixelplumbing.com/api-output).
  * However, it is possible to pass your own configurations to control the output of each format:
